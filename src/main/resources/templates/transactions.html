@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Transaction History</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+    <h2>🏦 Chandu Bank</h2>
+    <div>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/transactions">Transactions</a>
+        <a href="/logout" class="logout">Logout</a>
+    </div>
+</nav>
+
+<div class="transaction-container">
+    <h1>Transaction History</h1>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Date & Time</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Description</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="txn : ${transactions}">
+            <td th:text="${txn.dateTime}"></td>
+            <td th:text="${txn.type}"></td>
+            <td>₹ <span th:text="${txn.amount}"></span></td>
+            <td th:text="${txn.description}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
