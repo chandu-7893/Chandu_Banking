@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title>Apply Loan | Chandu Bank</title>
+
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			font-family: 'Segoe UI', sans-serif;
+		}
+
+		body {
+			background: #0f172a;
+			min-height: 100vh;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			padding: 30px;
+		}
+
+		.loan-container {
+			width: 100%;
+			max-width: 700px;
+			background: #1e293b;
+			padding: 40px;
+			border-radius: 25px;
+			box-shadow: 0 20px 50px rgba(0, 0, 0, .4);
+			color: white;
+		}
+
+		.header {
+			text-align: center;
+			margin-bottom: 30px;
+		}
+
+		.header h1 {
+			font-size: 35px;
+			margin-bottom: 10px;
+		}
+
+		.header p {
+			color: #cbd5e1;
+		}
+
+		.loan-card {
+			background: #334155;
+			padding: 25px;
+			border-radius: 20px;
+		}
+
+		.form-group {
+			margin-bottom: 20px;
+		}
+
+		label {
+			display: block;
+			margin-bottom: 8px;
+			font-weight: 600;
+		}
+
+		input,
+		select {
+			width: 100%;
+			padding: 14px;
+			border: none;
+			border-radius: 10px;
+			background: #475569;
+			color: white;
+			font-size: 16px;
+		}
+
+		input:focus,
+		select:focus {
+			outline: none;
+			border: 2px solid #3b82f6;
+		}
+
+		.loan-info {
+			margin-top: 20px;
+			padding: 15px;
+			background: #1e40af;
+			border-radius: 12px;
+		}
+
+		.loan-info p {
+			margin: 8px 0;
+		}
+
+		.btn {
+			width: 100%;
+			padding: 15px;
+			border: none;
+			border-radius: 12px;
+			background: #22c55e;
+			color: white;
+			font-size: 18px;
+			font-weight: bold;
+			cursor: pointer;
+			margin-top: 15px;
+			transition: .3s;
+		}
+
+		.btn:hover {
+			background: #16a34a;
+		}
+
+		.actions {
+			margin-top: 25px;
+			display: flex;
+			gap: 15px;
+			justify-content: center;
+			flex-wrap: wrap;
+		}
+
+		.link-btn {
+			text-decoration: none;
+			padding: 12px 20px;
+			border-radius: 10px;
+			font-weight: bold;
+			color: white;
+		}
+
+		.dashboard {
+			background: #2563eb;
+		}
+
+		.loans {
+			background: #9333ea;
+		}
+
+		.dashboard:hover {
+			background: #1d4ed8;
+		}
+
+		.loans:hover {
+			background: #7e22ce;
+		}
+
+		.emi-box {
+			margin-top: 20px;
+			padding: 20px;
+			background: #0f172a;
+			border-radius: 15px;
+			text-align: center;
+		}
+
+		.emi-box h2 {
+			color: #22c55e;
+			margin-top: 10px;
+		}
+	</style>
+</head>
+
+<body>
+
+	<div class="loan-container">
+
+		<div class="header">
+			<h1>🏦 Loan Application</h1>
+			<p>Apply for Personal, Home or Education Loan</p>
+		</div>
+
+		<div class="loan-card">
+
+			<form action="/apply-loan" method="post">
+
+				<div class="form-group">
+					<label>Loan Amount (₹)</label>
+					<input type="number" id="amount" name="amount" placeholder="Enter Loan Amount" required>
+				</div>
+
+				<div class="form-group">
+					<label>Loan Tenure (Years)</label>
+					<select id="tenure" name="tenure">
+						<option value="1">1 Year</option>
+						<option value="2">2 Years</option>
+						<option value="3">3 Years</option>
+						<option value="5">5 Years</option>
+						<option value="10">10 Years</option>
+						<option value="15">15 Years</option>
+						<option value="20">20 Years</option>
+					</select>
+				</div>
+
+				<div class="loan-info">
+					<p>Interest Rate: <strong>8.5%</strong></p>
+					<p>Processing Fee: <strong>₹500</strong></p>
+					<p>Approval Time: <strong>24 Hours</strong></p>
+				</div>
+
+				<div class="emi-box">
+					<h3>Estimated EMI</h3>
+					<h2 id="emi">₹0</h2>
+				</div>
+
+				<button type="submit" class="btn">
+					Apply Loan
+				</button>
+
+			</form>
+
+			<div class="actions">
+
+				<a href="/dashboard" class="link-btn dashboard">
+					Dashboard
+				</a>
+
+				<a href="/my-loans" class="link-btn loans">
+					My Loans
+				</a>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<script>
+
+		function calculateEMI() {
+
+			let amount =
+				parseFloat(document.getElementById("amount").value) || 0;
+
+			let years =
+				parseInt(document.getElementById("tenure").value) || 1;
+
+			let rate = 8.5 / 100 / 12;
+
+			let months = years * 12;
+
+			let emi =
+				(amount * rate * Math.pow(1 + rate, months))
+				/
+				(Math.pow(1 + rate, months) - 1);
+
+			if (isFinite(emi)) {
+				document.getElementById("emi").innerHTML =
+					"₹ " + emi.toFixed(2);
+			}
+		}
+
+		document.getElementById("amount")
+			.addEventListener("input", calculateEMI);
+
+		document.getElementById("tenure")
+			.addEventListener("change", calculateEMI);
+
+	</script>
+
+</body>
+
+</html>

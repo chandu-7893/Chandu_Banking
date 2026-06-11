@@ -249,30 +249,6 @@ public class BankingController {
 		return "change-password";
 	}
 	
-	@GetMapping("/card")
-	public String card(HttpSession session, Model model) {
-
-	    String username = (String) session.getAttribute("username");
-
-	    System.out.println("Session Username = " + username);
-
-	    if (username == null) {
-	        return "redirect:/login";
-	    }
-
-	    User user = bankingService.getUser(username);
-
-	    if (user == null) {
-	        System.out.println("User not found in database");
-	        return "redirect:/dashboard";
-	    }
-
-	    System.out.println("Card Number = " + user.getCardNumber());
-
-	    model.addAttribute("user", user);
-
-	    return "card";
-	}
 
 	@GetMapping("/logout")
 	public String logout(HttpSession session) {

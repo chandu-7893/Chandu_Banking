@@ -16,13 +16,18 @@ public class BankingService {
 	private final UserRepository userRepository;
 	private final TransactionRepository transactionRepository;
 	private final BCryptPasswordEncoder passwordEncoder;
+	private final NotificationService notificationService;
 
-	public BankingService(UserRepository userRepository, TransactionRepository transactionRepository,
-			BCryptPasswordEncoder passwordEncoder) {
+	public BankingService(
+	        UserRepository userRepository,
+	        TransactionRepository transactionRepository,
+	        BCryptPasswordEncoder passwordEncoder,
+	        NotificationService notificationService) {
 
-		this.userRepository = userRepository;
-		this.transactionRepository = transactionRepository;
-		this.passwordEncoder = passwordEncoder;
+	    this.userRepository = userRepository;
+	    this.transactionRepository = transactionRepository;
+	    this.passwordEncoder = passwordEncoder;
+	    this.notificationService = notificationService;
 	}
 
 	public String register(User user) {
@@ -95,31 +100,48 @@ public class BankingService {
 
 	public void deposit(String username, double amount) {
 
-		User user = userRepository.findByUsername(username);
+	    User user = userRepository.findByUsername(username);
 
-		user.setBalance(user.getBalance() + amount);
+	    user.setBalance(user.getBalance() + amount);
 
-		userRepository.save(user);
+	    userRepository.save(user);
 
-		saveTransaction(username, "DEPOSIT", amount, "Amount deposited");
+	    saveTransaction(
+	            username,
+	            "DEPOSIT",
+	            amount,
+	            "Amount deposited");
+
+	    notificationService.addNotification(
+	            username,
+	            "Deposit Successful",
+	            "₹" + amount + " deposited successfully");
 	}
 
 	public String withdraw(String username, double amount) {
 
-		User user = userRepository.findByUsername(username);
+	    User user = userRepository.findByUsername(username);
 
-		if (user.getBalance() < amount) {
+	    if (user.getBalance() < amount) {
+	        return "Insufficient balance";
+	    }
 
-			return "Insufficient balance";
-		}
+	    user.setBalance(user.getBalance() - amount);
 
-		user.setBalance(user.getBalance() - amount);
+	    userRepository.save(user);
 
-		userRepository.save(user);
+	    saveTransaction(
+	            username,
+	            "WITHDRAW",
+	            amount,
+	            "Amount withdrawn");
 
-		saveTransaction(username, "WITHDRAW", amount, "Amount withdrawn");
+	    notificationService.addNotification(
+	            username,
+	            "Withdrawal Successful",
+	            "₹" + amount + " withdrawn successfully");
 
-		return "success";
+	    return "success";
 	}
 
 	public String transfer(String senderUsername, String receiverAccountNumber, double amount) {
@@ -129,12 +151,10 @@ public class BankingService {
 		User receiver = userRepository.findByAccountNumber(receiverAccountNumber);
 
 		if (receiver == null) {
-
 			return "Receiver account not found";
 		}
 
 		if (sender.getBalance() < amount) {
-
 			return "Insufficient balance";
 		}
 
@@ -150,6 +170,12 @@ public class BankingService {
 
 		saveTransaction(receiver.getUsername(), "TRANSFER RECEIVED", amount,
 				"Received from account : " + sender.getAccountNumber());
+
+		notificationService.addNotification(sender.getUsername(), "Money Sent",
+				"₹" + amount + " transferred to account " + receiverAccountNumber);
+
+		notificationService.addNotification(receiver.getUsername(), "Money Received",
+				"₹" + amount + " received from " + sender.getUsername());
 
 		return "success";
 	}

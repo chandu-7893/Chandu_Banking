@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title>Notifications | Chandu Bank</title>
+
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			font-family: 'Segoe UI', sans-serif;
+		}
+
+		body {
+			background: #0f172a;
+			color: white;
+			padding: 30px;
+		}
+
+		.container {
+			max-width: 1000px;
+			margin: auto;
+		}
+
+		.header {
+			background: linear-gradient(135deg, #1e40af, #2563eb);
+			padding: 30px;
+			border-radius: 20px;
+			margin-bottom: 25px;
+		}
+
+		.header h1 {
+			font-size: 32px;
+		}
+
+		.notification-card {
+			background: #1e293b;
+			padding: 20px;
+			border-radius: 15px;
+			margin-bottom: 15px;
+			border-left: 5px solid #38bdf8;
+			transition: .3s;
+		}
+
+		.notification-card:hover {
+			transform: translateX(5px);
+		}
+
+		.notification-title {
+			font-size: 18px;
+			font-weight: bold;
+			margin-bottom: 8px;
+		}
+
+		.notification-message {
+			color: #cbd5e1;
+			margin-bottom: 10px;
+		}
+
+		.notification-time {
+			font-size: 13px;
+			color: #94a3b8;
+		}
+
+		.btn {
+			display: inline-block;
+			margin-top: 20px;
+			padding: 12px 20px;
+			background: #2563eb;
+			color: white;
+			text-decoration: none;
+			border-radius: 10px;
+		}
+
+		.btn:hover {
+			background: #1d4ed8;
+		}
+	</style>
+
+</head>
+
+<body>
+
+	<div class="container">
+
+		<div class="header">
+			<h1>🔔 Notifications</h1>
+			<p>Your latest banking alerts</p>
+		</div>
+
+		<div th:if="${notifications != null}">
+
+			<div class="notification-card" th:each="n : ${notifications}">
+
+				<div class="notification-title" th:text="${n.title}">
+				</div>
+
+				<div class="notification-message" th:text="${n.message}">
+				</div>
+
+				<div class="notification-time" th:text="${n.createdAt}">
+				</div>
+
+			</div>
+
+		</div>
+
+		<div th:if="${notifications == null or #lists.isEmpty(notifications)}">
+
+			<div class="notification-card">
+
+				<div class="notification-title">
+					🎉 Welcome
+				</div>
+
+				<div class="notification-message">
+					No notifications available.
+				</div>
+
+			</div>
+
+		</div>
+
+		<a href="/dashboard" class="btn">
+			⬅ Back to Dashboard
+		</a>
+
+	</div>
+
+</body>
+
+</html>
